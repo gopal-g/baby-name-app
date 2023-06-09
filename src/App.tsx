@@ -9,6 +9,7 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useDisclosure,
+  Button,
 } from '@chakra-ui/react';
 
 interface NameGroup {
@@ -41,14 +42,18 @@ const App: React.FC = () => {
 
   const [selectedNames, setSelectedNames] = useState<string[]>([]);
 
+  const [currentNameLength, setCurrentNameLength] = useState('');
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleCardClick = (names) => {
+  const handleCardClick = (names, length) => {
+    setCurrentNameLength(`${length}`);
     onOpen();
     setSelectedNames(names);
   };
 
   const handleDrawerClose = () => {
+    setCurrentNameLength(``);
     onClose();
     setSelectedNames([]);
   };
@@ -62,26 +67,39 @@ const App: React.FC = () => {
           key={length}
           length={length}
           names={names}
-          onClick={() => handleCardClick(names)}
+          onClick={() => handleCardClick(names, length)}
         />
       ))}
       {selectedNames.length > 0 && (
-        <Drawer onClose={onClose} isOpen={isOpen} size={'xl'}>
+        <Drawer
+          onClose={onClose}
+          isOpen={isOpen}
+          size={'xl'}
+          colorScheme={'linkedin'}
+        >
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>{`drawer contents`}</DrawerHeader>
+            <DrawerHeader>Names of length : {currentNameLength}</DrawerHeader>
             <DrawerBody>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Consequat nisl vel pretium lectus quam id. Semper quis lectus
-                nulla at volutpat diam ut venenatis. Dolor morbi non arcu risus
-                quis varius quam quisque. Massa ultricies mi quis hendrerit
-                dolor magna eget est lorem. Erat imperdiet sed euismod nisi
-                porta. Lectus vestibulum mattis ullamcorper velit.
-              </p>
+              <div style={{ height: '100vh' }}>
+                {selectedNames.map((name, index) => (
+                  <div
+                    style={{ backgroundColor: `${cardColor}`, padding: '24px' }}
+                    className={`p-6 bg-${cardColor} rounded-lg cursor-pointer`}
+                  >
+                    <h2 className="text-2xl font-bold text-white mb-2">
+                      {length}
+                    </h2>
+                  </div>
+                ))}
+              </div>
             </DrawerBody>
+            <DrawerFooter>
+              <Button variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       )}
